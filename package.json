@@ -1,0 +1,19 @@
+{
+  "name": "postgresSQL-assignment",
+  "version": "1.0.0",
+  "description": "SQL query practice demo which uses PostgresSQL and Nodejs to retrieve inventory records from a database and display them in html views.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ashe Senkatuuka",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "nodemon": "^3.1.7",
+    "path": "^0.12.7",
+    "pg": "^8.13.1"
+  }
+}

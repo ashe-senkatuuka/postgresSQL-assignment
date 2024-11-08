@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Management</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div id="nav-placeholder"></div>
+
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-start mb-4">
+            <ul class="nav nav-pills" role="tablist">
+                <li class="nav-item">
+                    <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#allCars">All Cars</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#owners">Owners</button>
+                </li>
+            </ul>
+        </div>
+
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="allCars">
+                <div class="table-responsive">
+                    <p>List of all vehicles and all owners</p>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Owner First Name</th>
+                                <th>Owner Last Name</th>
+                                <th>Make</th>
+                                <th>Model</th>
+                                <th>Year</th>
+                                <th>Price</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vehiclesTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="owners">
+                <div class="table-responsive">
+                    <p>Summary information about the owners</p>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Average Price</th>
+                                <th>Vehicle Count</th>
+
+                            </tr>
+                        </thead>
+                        <tbody id="ownersTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Load navbar
+        fetch('/navbar.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('nav-placeholder').innerHTML = data;
+            });
+
+        // Load vehicles with owners
+        function loadVehiclesWithOwners() {
+            fetch('/api/vehicles/vehicles')
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.getElementById('vehiclesTableBody');
+                    tbody.innerHTML = '';
+                    data.forEach(row => {
+                        tbody.innerHTML += `
+                            <tr>
+                                <td>${row.first_name || 'N/A'}</td>
+                                <td>${row.last_name || 'N/A'}</td>
+                                <td>${row.make || 'N/A'}</td>
+                                <td>${row.model || 'N/A'}</td>
+                                <td>${row.year || 'N/A'}</td>
+                                <td>$${row.price ? row.price.toLocaleString(
+                            'en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 'N/A'}</td>
+                            </tr>
+                        `;
+                    });
+                });
+        }
+
+        // Load owner statistics
+        function loadOwnerStats() {
+            fetch('/api/vehicles/owners')
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.getElementById('ownersTableBody');
+                    tbody.innerHTML = '';
+                    data.forEach(row => {
+                        tbody.innerHTML += `
+                            <tr>
+                                <td>${row.first_name}</td>
+                                <td>${row.last_name}</td>
+                                
+                                <td>${'$' + parseFloat(row.average_price).toLocaleString(
+                            'en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                                <td>${row.vehicle_count}</td>
+                            </tr>
+                        `;
+                    });
+                });
+        }
+
+        // Initial load
+        loadVehiclesWithOwners();
+        loadOwnerStats();
+
+        // Add event listeners for tab changes
+        document.querySelectorAll('[data-bs-toggle="pill"]').forEach(pill => {
+            pill.addEventListener('shown.bs.tab', event => {
+                if (event.target.getAttribute('data-bs-target') === '#allCars') {
+                    loadVehiclesWithOwners();
+                } else if (event.target.getAttribute('data-bs-target') === '#owners') {
+                    loadOwnerStats();
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
