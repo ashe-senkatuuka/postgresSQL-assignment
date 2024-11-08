@@ -10,5 +10,6 @@ The PostgreSQL connection is stored in ```db.js```  and it connects to a Postgre
 In order to retrieve records from the database, the query method is invoked in ``index.js`` parsing in the SQL query string and an optional array of parameters.
 
 The app is hosted on render on the url below:
- 
+https://postgressql-assignment.onrender.com
+
  
